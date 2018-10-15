@@ -87,14 +87,15 @@ server <- function(input, output) {
   # else if play is selected
   # then type and player are conditional on that
   
+  customStop <- c("thee", "thou","thy","shall","will")   # Custom Stopwords
   
   # Create Docs for Word Cloud
   docs <- reactive({
     docs  <- Corpus(VectorSource(text()))
     docs <- tm_map(docs, content_transformer(tolower))          # Convert the text to lower case
     docs <- tm_map(docs, removeNumbers)                         # Remove numbers
-    docs <- tm_map(docs, removeWords, stopwords("english"))     # Remove english common stopwords
-    docs <- tm_map(docs, removeWords, c("thee", "thou","thy","shall","will"))  # Remove your own stopwords
+    docs <- tm_map(docs, removeWords, stopwords("english"))     # Remove common english stopwords
+    docs <- tm_map(docs, removeWords, customStop)               # Remove custom stopwords
     docs <- tm_map(docs, removePunctuation)                     # Remove punctuation
     docs <- tm_map(docs, stripWhitespace)                       # Eliminate extra white spaces
     return(docs)
