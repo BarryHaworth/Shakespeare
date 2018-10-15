@@ -104,5 +104,4 @@ ggplot(play_count, aes(x = Play, y=words,fill=factor(Type)) ) +
   geom_bar(width = 1,stat="identity") +
   coord_flip()
 
-
 save(works,file=paste0(DATA_DIR,"/works.RData"))
