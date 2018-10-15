@@ -3,6 +3,12 @@
 # Play type, by play and by character 
 # Using code I already had, but a sample from https://shiny.rstudio.com/gallery/word-cloud.html
 
+# Next thing to try: reduce filter options based on other filter options.
+# Maybe one of these:
+#  https://sites.temple.edu/psmgis/2017/07/26/r-shiny-task-create-an-input-select-box-that-is-dependent-on-a-previous-input-choice/
+# https://groups.google.com/forum/#!topic/shiny-discuss/Q1ZvnjDCzUM
+
+
 library(shiny)
 
 library(dplyr)
