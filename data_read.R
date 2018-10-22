@@ -10,6 +10,7 @@ library(ggplot2)
 
 # HOME        <- "/data/anet11.2/tatf/work/uca78"
 HOME        <- "c:/R"
+# HOME        <- "H:/R"
 PROJECT_DIR <- paste0(HOME,"/Shakespeare")
 DATA_DIR    <- paste0(PROJECT_DIR,"/data")
 
@@ -19,12 +20,13 @@ works <- read.csv(paste0(DATA_DIR,"/Shakespeare_data.csv"),stringsAsFactors = FA
 # 111396 lines 
 
 # Data Cleaning
+works <- works %>% rename(Character=Player)  # Rename Player as Character
 
 works <- works %>% filter(ActSceneLine != "")  # Remove records which are not lines
 # 105153 lines
 
-works$Player <- tools::toTitleCase(tolower(works$Player))  # Player name in title case (initial capital)
-works$Play   <- tools::toTitleCase(works$Play)    # Play name in title case (initial capital)
+works$Character <- tools::toTitleCase(tolower(works$Character))  # Character name in title case (initial capital)
+works$Play      <- tools::toTitleCase(works$Play)    # Play name in title case (initial capital)
 
 # Set play type
 
@@ -85,16 +87,16 @@ works$lines <- 1
 works$words <- str_count(works$PlayerLine, '\\w+')
 
 summary(works)
-table(works$Play)   # list of plays
-table(works$Player) # list of characters
+table(works$Play)      # list of plays
+table(works$Character) # list of characters
 
-type_count   <- aggregate(list(lines =works$lines,words=works$words),by=list(Type=works$Type),sum)
-play_count   <- aggregate(list(lines =works$lines,words=works$words),by=list(Type=works$Type,Play=works$Play),sum)
-player_count <- aggregate(list(lines =works$lines,words=works$words),
-                          by=list(Type=works$Type,Play=works$Play,Player=works$Player),sum)
+type_count      <- aggregate(list(lines =works$lines,words=works$words),by=list(Type=works$Type),sum)
+play_count      <- aggregate(list(lines =works$lines,words=works$words),by=list(Type=works$Type,Play=works$Play),sum)
+character_count <- aggregate(list(lines =works$lines,words=works$words),
+                          by=list(Type=works$Type,Play=works$Play,Character=works$Character),sum)
 
 # Biggest parts
-head(player_count[order(player_count$words,decreasing = T),],20)
+head(character_count[order(character_count$words,decreasing = T),],20)
 
 # Bar Charts
 ggplot(type_count, aes(x = Type, y=words,fill=factor(Type)) ) + 

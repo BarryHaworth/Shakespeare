@@ -22,6 +22,7 @@ library(RColorBrewer)
 
 # HOME        <- "/data/anet11.2/tatf/work/uca78"
 HOME        <- "c:/R"
+# HOME        <- "h:/R"
 PROJECT_DIR <- paste0(HOME,"/Shakespeare")
 DATA_DIR    <- paste0(PROJECT_DIR,"/data")
 
@@ -43,9 +44,9 @@ ui <- fluidPage(
                      selected =  NULL,
                      multiple=TRUE),
       
-      selectizeInput(inputId = "player", 
+      selectizeInput(inputId = "character", 
                      label = "Character",
-                     sort(unique(as.character(works$Player))), 
+                     sort(unique(as.character(works$Character))), 
                      selected =  NULL,
                      multiple=TRUE)
     ),
@@ -58,9 +59,9 @@ ui <- fluidPage(
   )
 
     
-server <- function(input, output) {
+server <- function(input, output, session) {
 
-  # Filter Works > types > Plays > Players > text
+  # Filter Works > types > plays > characters > text
   types <- reactive({
     types <- works
     if (is.null(input$type) == FALSE){
@@ -75,23 +76,51 @@ server <- function(input, output) {
     }
     return(plays)
   })
-  players <- reactive({
-    players <- plays()
-    if (is.null(input$player) == FALSE){
-      players <- players %>% filter(Player %in% input$player)
+  characters <- reactive({
+    characters <- plays()
+    if (is.null(input$character) == FALSE){
+      characters <- characters %>% filter(Character %in% input$character)
     }
-    return(players)
+    return(characters)
   })
   text <- reactive({
-    return(players()$PlayerLine)
+    return(characters()$PlayerLine)
   })  
   
-  # if players is selected
+  # if character is selected
   # then play and play type are conditional on that
   # else if type is selected
-  # then play and player are conditional on that
+  # then play and character are conditional on that
   # else if play is selected
-  # then type and player are conditional on that
+  # then type and character are conditional on that
+  
+  observe({
+    x <- input$type
+
+    # Can use character(0) to remove all choices
+    if (is.null(x))
+      x <- character(0)
+    
+    # Can also set the label and select items
+    updateSelectizeInput(session, "type",
+                         label = paste("Play Type"),
+                         choices = sort(unique(as.character(characters()$Type ))),
+                         selected = input$type
+    )
+    updateSelectizeInput(session, "play",
+                         label = paste("Play"),
+                         choices = sort(unique(as.character(characters()$Play ))),
+                         selected = input$play
+    )
+    updateSelectizeInput(session, "character",
+                         label = paste("Character"),
+                         choices = sort(unique(as.character(characters()$Character ))),
+                         selected = input$character
+    )
+    
+  })
+
+
   
   customStop <- c("thee", "thou","thy","shall","will")   # Custom Stopwords
   
